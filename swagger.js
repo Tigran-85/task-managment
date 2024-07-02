@@ -1,4 +1,4 @@
-export default  {
+module.exports = {
   openapi: '3.0.0',
   info: {
       title: 'Task Management System API Documentation',
