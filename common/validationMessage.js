@@ -1,7 +1,6 @@
 
 
 const RESPONSE_MESSAGES = {
-    SIGN_OUT: 'Signed out',
     CREATED: 'Created successfully',
     DELETED: 'Deleted successfully',
     UPDATED: 'Updated successfully',
@@ -23,9 +22,6 @@ const RESPONSE_MESSAGES = {
   const VALIDATION_ERROR_MESSAGES = {
     REQUIRED: "Field is required",
     EMAIL: "Please enter a valid email address.",
-    DATE: "Please enter a valid date.",
-    NUMBER: "Please enter a valid number.",
-    DIGITS: "Please enter only digits.",
     STATUS_VALIDATION_ERROR: "status must be either completed or not_completed",
     maxlength: (length) => `Please enter no more than ${length} characters.`,
     minlength: (length) => `Please enter at least ${length} characters.`,

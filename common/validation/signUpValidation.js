@@ -7,9 +7,11 @@ const signupValidation = [
     .trim()
     .not()
     .isEmpty()
-    .withMessage(VALIDATION_ERROR_MESSAGES)
+    .withMessage(VALIDATION_ERROR_MESSAGES.REQUIRED)
     .isLength({ min: 3 })
-    .withMessage(VALIDATION_ERROR_MESSAGES.min(3)),
+    .withMessage(VALIDATION_ERROR_MESSAGES.min(3))
+    .isLength({ max: 50 })
+    .withMessage(VALIDATION_ERROR_MESSAGES.max(50)),
 
   body("lastName")
     .trim()
@@ -17,7 +19,9 @@ const signupValidation = [
     .isEmpty()
     .withMessage(VALIDATION_ERROR_MESSAGES.REQUIRED)
     .isLength({ min: 3 })
-    .withMessage(VALIDATION_ERROR_MESSAGES.min(3)),
+    .withMessage(VALIDATION_ERROR_MESSAGES.min(3))
+    .isLength({ max: 50 })
+    .withMessage(VALIDATION_ERROR_MESSAGES.max(50)),
 
   body("email").trim().isEmail().withMessage(VALIDATION_ERROR_MESSAGES.EMAIL),
 
@@ -34,6 +38,7 @@ const signupValidation = [
     .withMessage("Min 2 numbers")
     .matches(/^(?=(.*[\W]){1,}).{2,}$/)
     .withMessage("Min 1 special character"),
+    
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

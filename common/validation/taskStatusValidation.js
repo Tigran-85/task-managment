@@ -4,6 +4,7 @@ const ApiError = require("../../exceptions/apiErrors.js");
 
 const taskValidation = [
   check("status").isIn(["completed", "not_completed"]),
+
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

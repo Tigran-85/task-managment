@@ -8,7 +8,10 @@ const signInvalidation = [
   body("password")
     .trim()
     .isLength({ min: 5 })
-    .withMessage(VALIDATION_ERROR_MESSAGES.min(5)),
+    .withMessage(VALIDATION_ERROR_MESSAGES.min(5))
+    .isLength({ max: 50 })
+    .withMessage(VALIDATION_ERROR_MESSAGES.max(50)),
+
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

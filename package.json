@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "create-users": "npx sequelize-cli model:generate --name users --attributes firstName:string,lastName:string,email:string,password:string",
-    "create-tasks": "npx sequelize-cli model:generate --name tasks --attributes title:string,description:string,status",
-    "migrate": "npx sequelize-cli db:migrate"
+    "db-create-users": "npx sequelize-cli model:generate --name users --attributes firstName:string,lastName:string,email:string,password:string",
+    "db-create-tasks": "npx sequelize-cli model:generate --name tasks --attributes title:string,description:string,status",
+    "db-migrate": "npx sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "Tigran Poghosyan",

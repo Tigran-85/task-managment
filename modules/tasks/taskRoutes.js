@@ -2,7 +2,8 @@ const TaskController = require("./taskController.js");
 const taskController = new TaskController();
 
 // validators
-const TaskValidation = require("../../common/validation/TaskValidation.js");
+const taskValidation = require("../../common/validation/taskValidation.js");
+const taskStatusValidation = require("../../common/validation/taskStatusValidation.js");
 const authMiddleware = require("../../middlewares/authMiddleware.js");
 
 const { Router } = require("express");
@@ -13,15 +14,19 @@ router.use(authMiddleware);
 
 router.get("/", taskController.getTasks);
 
-router.post("/create", taskController.createTask);
+router.post("/create", 
+  taskValidation,
+  taskController.createTask);
 
 router.get("/:id", taskController.getTaskById);
 
-router.put("/update/:id", taskController.updateTask);
+router.put("/update/:id", 
+  taskValidation,
+  taskController.updateTask);
 
 router.put(
   "/update/status/:id",
-  TaskValidation,
+  taskStatusValidation,
   taskController.updateTaskStatus
 );
 

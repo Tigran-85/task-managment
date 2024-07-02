@@ -26,15 +26,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      created_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       },
-      updated_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
-      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
     });
   },
 

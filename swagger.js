@@ -85,8 +85,110 @@ module.exports = {
                     },
                 },
             },
-        },       
-      '/auth/sign-up': {
+        },
+        '/tasks/update/{id}': {
+          put: {
+            tags: ['Tasks'],
+            security: [{
+                bearerAuth: []
+                }],
+                summary: 'Update a task by ID',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path', 
+                        required: true,
+                        schema: {
+                            type: 'string',
+                        },
+                        description: 'Unique identifier of the task.',
+                    },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/TaskInput',
+                            },
+                            example: {
+                                title: "new title",  
+                                description: "test description"
+                            }
+                        },
+                    },
+                },
+                responses: {
+                    '200': {
+                        description: 'Successful operation',
+                    },
+                },
+            },
+        },
+        '/tasks/update/status/{id}': {
+          put: {
+            tags: ['Tasks'],
+            security: [{
+                bearerAuth: []
+                }],
+                summary: 'Update status of a task',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path', 
+                        required: true,
+                        schema: {
+                            type: 'string',
+                        },
+                        description: 'Unique identifier of the task.',
+                    },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/TaskStatusInput',
+                            },
+                            example: {
+                                status: "completed",  
+                            }
+                        },
+                    },
+                },
+                responses: {
+                    '200': {
+                        description: 'Successful operation',
+                    },
+                },
+            },
+        },
+        '/tasks/delete/{id}': {
+          delete: {
+            tags: ['Tasks'],
+            security: [{
+                bearerAuth: []
+                }],
+                summary: 'Delete a task by ID',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path', 
+                        required: true,
+                        schema: {
+                            type: 'string',
+                        },
+                        description: 'Unique identifier of the task.',
+                    },
+                ],
+                responses: {
+                    '200': {
+                        description: 'Successful operation',
+                    },
+                },
+            },
+        },        
+      '/auth/signup': {
           post: {
               tags: ['User Authentication'],
               summary: 'Registration',
@@ -107,7 +209,7 @@ module.exports = {
               },
           },
       },
-      '/auth/sign-in': {
+      '/auth/signin': {
           post: {
               tags: ['User Authentication'],
               summary: 'Login',
@@ -121,6 +223,20 @@ module.exports = {
                       },
                   },
               },
+              responses: {
+                  '200': {
+                      description: 'Successful operation',
+                  },
+              },
+          },
+      },
+      '/auth/info': {
+          get: {
+              tags: ['User Authentication'],
+              summary: 'Get user info',
+              security: [{
+                bearerAuth: []
+                }],
               responses: {
                   '200': {
                       description: 'Successful operation',
@@ -142,8 +258,15 @@ module.exports = {
               type: "object",
               required: ["title", "description"],
               properties: {
+                title: {
+                    type: "string",
+                    minLength: 3,
+                    maxLength: 50,
+                  },  
                   description: {
                     type: "string",
+                    minLength: 3,
+                    maxLength: 50,
                   }
               },
           },
@@ -163,10 +286,12 @@ module.exports = {
                   firstName: {
                       type: 'string',
                       minLength: 3,
+                      maxLength: 30,
                   },
                   lastName: {
                       type: 'string',
                       minLength: 3,
+                      maxLength: 30,
                   },
                   email: {
                       type: 'string',

@@ -1,14 +1,12 @@
 const BaseService = require("../../services/BaseService.js");
-const TaskManager = require("./tasksModel.js");
-const taskManager = new TaskManager();
 const { Task: taskModel } = require("../../models");
-
 const ApiError = require("../../exceptions/apiErrors.js");
 const {
   RESPONSE_MESSAGES,
   ERROR_MESSAGES,
   VALIDATION_ERROR_MESSAGES,
 } = require("../../common/validationMessage.js");
+const { where } = require("sequelize");
 
 class TaskService extends BaseService {
   constructor() {
@@ -24,12 +22,16 @@ class TaskService extends BaseService {
         throw ApiError.BadRequest(VALIDATION_ERROR_MESSAGES.REQUIRED);
       }
 
-      const task = await taskManager.createTask(userId, title, description);
+      const task =  await taskModel.create({
+        userId,
+        title,
+        description
+      })
 
       return this.response({
         message: RESPONSE_MESSAGES.CREATED,
         data: {
-          id: task.insertId,
+          id: task,
         },
       });
     } catch (error) {
@@ -41,9 +43,12 @@ class TaskService extends BaseService {
     try {
       const userId = req.user.id;
 
-      const tasks = await taskManager.getTasks(userId);
-      const taskNew = await taskModel.findAll();
-      console.log(taskNew);
+      const tasks = await taskModel.findAll({
+        where: {
+          userId
+        }
+      });
+
       return this.response({
         data: {
           tasks,
@@ -59,9 +64,14 @@ class TaskService extends BaseService {
       const { id } = req.params;
       const userId = req.user.id;
 
-      const task = await taskManager.getTaskById(id, userId);
+      const task = await taskModel.findOne({
+        where: {
+          id,
+          userId
+        }
+      });
 
-      if (!task.length) {
+      if (!task) {
         throw ApiError.BadRequest(ERROR_MESSAGES.TASK_NOT_FOUND);
       }
 
@@ -81,14 +91,25 @@ class TaskService extends BaseService {
       const { title, description } = req.body;
       const userId = req.user.id;
 
-      const task = await taskManager.updateTask(id, title, description, userId);
+      const task = await taskModel.findOne({
+        where: {
+          id,
+          userId
+        }
+      });
 
-      if (task.affectedRows === 0) {
+      if (!task) {
         throw ApiError.BadRequest(ERROR_MESSAGES.TASK_NOT_FOUND);
       }
 
+      task.title = title;
+      task.description = description;
+
+      await task.save()
+
       return this.response({
         message: RESPONSE_MESSAGES.UPDATED,
+        data: task
       });
     } catch (error) {
       next(error);
@@ -101,20 +122,27 @@ class TaskService extends BaseService {
       const { status } = req.body;
       const userId = req.user.id;
 
-      const statusCheck = await taskManager.getTaskById(id, userId);
+      const task = await taskModel.findOne({
+        where: {
+          id,
+          userId
+        }
+      });
 
-      if (!statusCheck.length) {
+      if (!task) {
         throw ApiError.BadRequest(ERROR_MESSAGES.TASK_NOT_FOUND);
       }
 
-      if (statusCheck[0].status === status) {
+      if (task.status === status) {
         throw ApiError.BadRequest(`status already ${status}`);
       }
 
-      const task = await taskManager.updateTaskStatus(id, status, userId);
+      task.status = status;
+      await task.save();
 
       return this.response({
         message: RESPONSE_MESSAGES.UPDATED,
+        data: task
       });
     } catch (error) {
       next(error);
@@ -126,14 +154,22 @@ class TaskService extends BaseService {
       const { id } = req.params;
       const userId = req.user.id;
 
-      const task = await taskManager.deleteTask(id, userId);
+      const task = await taskModel.findOne({
+        where: {
+          id,
+          userId
+        }
+      });
 
-      if (task.affectedRows === 0) {
+      if (!task) {
         throw ApiError.BadRequest(ERROR_MESSAGES.TASK_NOT_FOUND);
       }
 
+      await task.destroy();
+
       return this.response({
         message: RESPONSE_MESSAGES.DELETED,
+        data: task
       });
     } catch (error) {
       next(error);

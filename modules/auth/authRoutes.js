@@ -2,8 +2,8 @@ const AuthController = require("./authController.js");
 const authController = new AuthController();
 
 // validators
-const signInvalidation = require("../../common/validation/SignInValidation.js");
-const signUpValidation = require("../../common/validation/SignUpValidation.js");
+const signInvalidation = require("../../common/validation/signInValidation.js");
+const signUpValidation = require("../../common/validation/signUpValidation.js");
 const authMiddleware = require("../../middlewares/authMiddleware.js");
 
 const { Router } = require("express");

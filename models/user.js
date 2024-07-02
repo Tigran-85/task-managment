@@ -41,8 +41,15 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "User",
       tableName: "users",
-      underscored: true,
     }
   );
+  
+  User.prototype.toJSON =  function () {
+    var values = Object.assign({}, this.get());
+  
+    delete values.password;
+    return values;
+  };
+
   return User;
 };

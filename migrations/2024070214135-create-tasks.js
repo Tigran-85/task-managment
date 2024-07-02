@@ -31,15 +31,14 @@ module.exports = {
         allowNull: false,
         defaultValue: "not_completed",
       },
-      created_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       },
-      updated_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-        onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
-      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
     });
   },
 

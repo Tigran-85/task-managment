@@ -1,9 +1,7 @@
 const bcrypt = require("bcrypt");
 const BaseService = require("../../services/BaseService.js");
 const tokenService = require("../../services/TokenService.js");
-const UserManager = require("./users.js");
-const userManager = new UserManager();
-const { Task: taskModel } = require("../../models");
+const { User: userModel } = require("../../models");
 const ApiError = require("../../exceptions/apiErrors.js");
 const {
   RESPONSE_MESSAGES,
@@ -18,26 +16,25 @@ class AuthService extends BaseService {
   async signUp(req, res, next) {
     try {
       const { firstName, lastName, email, password } = req.body;
+      
+      const userExists = await userModel.findOne({
+        where: { email }
+      });
 
-      const userExists = await userManager.findByEmail(email);
-
-      if (userExists.length) {
+      if (userExists) {
         throw ApiError.BadRequest(ERROR_MESSAGES.USER_EXIST);
       }
 
       const hashPassword = await bcrypt.hash(password, +process.env.SALT);
 
-      const userCreated = await userManager.createUser(
+      const user = await userModel.create({
         firstName,
         lastName,
         email,
-        hashPassword
-      );
+        password: hashPassword
+      })
 
-      if (userCreated.affectedRows !== 0) {
-        const user = await userManager.findById(userCreated.insertId);
-        delete user[0].password;
-
+      if (user) {
         return this.response({
           message: RESPONSE_MESSAGES.CREATED,
           data: {
@@ -51,21 +48,24 @@ class AuthService extends BaseService {
   }
 
   async login(email, password) {
-    const user = await userManager.findByEmail(email);
 
-    if (!user.length) {
+    const user = await userModel.findOne({
+      where: { email }
+    });
+
+    if (!user) {
       throw ApiError.BadRequest(ERROR_MESSAGES.INVALID_CREDENTIALS);
     }
 
-    const isPassEquals = await bcrypt.compare(password, user[0].password);
+    const isPassEquals = await bcrypt.compare(password, user.password);
 
     if (!isPassEquals) {
       throw ApiError.BadRequest(ERROR_MESSAGES.INVALID_CREDENTIALS);
     }
 
-    const token = tokenService.generateToken({ id: user[0].id, email: email });
+    const token = tokenService.generateToken({ id: user.id, email: email });
 
-    return { user: user[0], token };
+    return { user, token };
   }
 
   async signIn(req, res, next) {
